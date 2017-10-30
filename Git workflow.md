@@ -11,24 +11,40 @@ When it comes to version control system, **svn** comes into someone's mind. SVN 
 ## 3.How we use Git workflow
 There are some kinds of different Git workflow such as **Centralized Workflow**,**Feature Branch Workflow**, **Gitflow Workflow**, **Forking Workflow**. However, I think it is not which Git workflow you choose but whethe the Git workflow chosen suit your need and your team that matters.
 
-### Take Centralized Workflow as an example
+###Take Centralized Workflow as an example
 
 ### Step1. Initialize the central repository
 First, someone needs to create the central repository on a server. If it’s a new project, you can initialize an empty repository. Otherwise, you’ll need to import an existing Git or SVN repository.
+
+Central repositories should always be bare repositories (they shouldn’t have a working directory), which can be created as follows:
+
+> ssh user@host git init --bare /path/to/repo.git
+
+Be sure to use a valid SSH username for 'user', the domain or IP address of your server for 'host', and the location where you'd like to store your repo for '/path/to/repo.git'. Note that the '.git 'extension is conventionally appended to the repository name to indicate that it’s a bare repository.
 
 ### Step2. Hosted central repositories
 Central repositories are often created through 3rd party Git hosting services like Bitbucket Cloud or Bitbucket Server. The process of initializing a bare repository discussed above is handled for you by the hosting service. The hosting service will then provide an address for the central repository to access from your local repository.
 
 ### Step3. Clone the central repository
-Each developer creates a local copy of the entire project.When you clone a repository, Git automatically adds a shortcut called `origin` that points back to the “parent” repository, under the assumption that you'll want to interact with it further on down the road. 
+Each developer creates a local copy of the entire project.This is accomplished via the 'git clone' command:
+
+> git clone ssh://user@host/path/to/repo.git
+
+When you clone a repository, Git automatically adds a shortcut called `origin` that points back to the “parent” repository, under the assumption that you'll want to interact with it further on down the road. 
 
 ### Step4. Make changes and commit
 Once the repository is cloned locally, a developer can make changes using the standard Git commit process: edit, stage, and commit. If you’re not familiar with the staging area, it’s a way to prepare a commit without having to include every change in the working directory. This lets you create highly focused commits, even if you’ve made a lot of local changes.
+
+> git status # View the state of the repo  
+git add <some-file> # Stage a file  
+git commit # Commit a file</some-file>
 
 Remember that since these commands create local commits, John can repeat this process as many times as he wants without worrying about what’s going on in the central repository. This can be very useful for large features that need to be broken down into simpler, more atomic chunks.
 
 ### Step5. Push new commits to central repository
 Once the local repository has new changes committed. These change will need to be pushed to share with other developers on the project.
+
+> git push origin master
 
 This command will push the new committed changes to the central repository. When pushing changes to the central repository, it is possible that updates from another developer have been previously pushed that contain code which conflict with the intended push updates. Git will output a message indicating this conflict. In this situation, `git pull` will first need to be executed. This conflict scenario will be expanded on in the following section.
 
